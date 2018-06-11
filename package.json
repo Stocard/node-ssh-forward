@@ -2,7 +2,7 @@
   "name": "node-ssh-forward",
   "version": "0.0.1",
   "main": "dist/Connection.js",
-  "author": "Martin Wentzel <mwentzel@stocard.de>",
+  "author": "Martin Wentzel <wentzel@stocard.de>",
   "license": "MIT",
   "description": "Easy to use ssh client with port forwarding and bastion host support",
   "dependencies": {
