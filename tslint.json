@@ -1,0 +1,29 @@
+{
+  "extends": "tslint-config-airbnb",
+  "rules": {
+    "strict-boolean-expressions": [
+      true,
+      "allow-null-union",
+      "allow-undefined-union"
+    ],
+    "semicolon": [
+      true,
+      "never"
+    ],
+    "trailing-comma": [
+      false
+    ],
+    "indent": [
+      true,
+      "spaces",
+      2
+    ],
+    "no-trailing-whitespace": true,
+    "max-line-length": [
+      false
+    ],
+    "no-use-before-declare": true,
+    "no-unused-variable": true,
+    "variable-name": [true, "allow-leading-underscore"]
+  }
+}
