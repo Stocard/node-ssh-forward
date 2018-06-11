@@ -38,7 +38,6 @@ class SSHConnection {
   constructor(private options: Options) { }
 
   public async shutdown() {
-    console.log('no connections', this.connections.length)
     for (const connection of this.connections) {
       connection.removeAllListeners()
       connection.end()
@@ -75,7 +74,6 @@ class SSHConnection {
   private async connect(host: string, stream?: NodeJS.ReadableStream): Promise<Client> {
     const connection = new Client()
     return new Promise<Client>((resolve) => {
-      console.log(`connect to ${host}`)
       const options = {
         host,
         username: this.options.username,
@@ -86,7 +84,6 @@ class SSHConnection {
       }
       connection.connect(options)
       connection.on('ready', () => {
-        console.log(`Connection to ${host} successful`)
         this.connections.push(connection)
         return resolve(connection)
       })
@@ -96,7 +93,6 @@ class SSHConnection {
   private async createForwarding(connection: Client) {
     return new Promise((resolve, reject) => {
       this.server = net.createServer((socket) => {
-        console.log('incoming message')
         connection.forwardOut('localhost', this.options.portForwarding.fromPort, this.options.portForwarding.toHost, this.options.portForwarding.toPort, (error, stream) => {
           if (error) {
             console.log('error', error)
@@ -106,7 +102,6 @@ class SSHConnection {
           stream.pipe(socket)
         })
       }).listen(this.options.portForwarding.fromPort, 'localhost', () => {
-        console.log(`bound server to ${this.options.portForwarding.fromPort} on localhost`)
         return resolve()
       })
     })
