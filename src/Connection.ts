@@ -17,10 +17,13 @@
 
 import { Client } from 'ssh2'
 import * as net from 'net'
+import * as fs from 'fs'
+import * as os from 'os'
+import * as path from 'path'
 
 interface Options {
   username?: string
-  privateKey: string | Buffer
+  privateKey?: string | Buffer
   bastionHost?: string
   endHost: string
   portForwarding: {
@@ -38,6 +41,9 @@ class SSHConnection {
   constructor(private options: Options) {
     if (!options.username) {
       this.options.username = process.env['SSH_USERNAME'] || process.env['USER']
+    }
+    if (!options.privateKey) {
+      this.options.privateKey = fs.readFileSync(`${os.homedir()}${path.sep}.ssh${path.sep}id_rsa`)
     }
   }
 

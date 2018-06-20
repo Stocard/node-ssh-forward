@@ -60,7 +60,7 @@ await sshConnection.establish()
 Options are an object with following properties: 
 
 * `username` (optional): The username used for your ssh connection (equivalent to `-l` option). If not set, it first looks for an `SSH_USERNAME` environment variable. If that is not set, it fallbacks to `USER` environment variable.
-* `privateKey` (required): Can be a `string` or `Buffer``
+* `privateKey` (optional): Can be a `string` or `Buffer` that contains a private key. If not set, it fallbacks to `~/.ssh/id_rsa`
 * `endHost` (required): The host you want to end up on (connect to)
 * `bastionHost` (optional): You can specify a bastion host if you want
 * `portForwarding` (required): `fromPort` specifies the port on your local computer, `toPort` the port on `toHost`. When `endHost` is able to reach `toHost` it can establish a port forwarding (see example above). If you want to have port forwarding from a port on `endHost`, your `toHost` value must be `localhost`
