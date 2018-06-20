@@ -20,8 +20,6 @@ $ ssh -L 9000:imgur.com:80 example.com
 
 ```js
 const sshConnection = new SSHConnection({
-  username: 'yourSshUsername',
-  privateKey: fs.readFileSync(`${os.homedir()}/.ssh/id_rsa`),
   endHost: 'example.com',
   portForwarding: {
     fromPort: 80,
@@ -40,8 +38,6 @@ $ ssh -L 9000:localhost:80 -J your-jump-host.com example.com
 
 ```js
 const sshConnection = new SSHConnection({
-  username: 'yourSshUsername',
-  privateKey: fs.readFileSync(`${os.homedir()}/.ssh/id_rsa`),
   endHost: 'example.com',
   bastionHost: 'your-jump-host.com',
   portForwarding: {
