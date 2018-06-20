@@ -57,9 +57,9 @@ await sshConnection.establish()
 
 #### `new SSHConnection(options)`
 
-Options are: 
+Options are an object with following properties: 
 
-* `username` (required)
+* `username` (optional): The username used for your ssh connection (equivalent to `-l` option). If not set, it first looks for an `SSH_USERNAME` environment variable. If that is not set, it fallbacks to `USER` environment variable.
 * `privateKey` (required): Can be a `string` or `Buffer``
 * `endHost` (required): The host you want to end up on (connect to)
 * `bastionHost` (optional): You can specify a bastion host if you want

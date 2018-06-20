@@ -19,7 +19,7 @@ import { Client } from 'ssh2'
 import * as net from 'net'
 
 interface Options {
-  username: string
+  username?: string
   privateKey: string | Buffer
   bastionHost?: string
   endHost: string
@@ -35,7 +35,11 @@ class SSHConnection {
   private server
   private connections: Client[] = []
 
-  constructor(private options: Options) { }
+  constructor(private options: Options) {
+    if (!options.username) {
+      this.options.username = process.env['SSH_USERNAME'] || process.env['USER']
+    }
+  }
 
   public async shutdown() {
     for (const connection of this.connections) {
