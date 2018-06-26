@@ -48,7 +48,7 @@ class SSHConnection {
     }
   }
 
-  public async shutdown() {
+  private async shutdown() {
     for (const connection of this.connections) {
       connection.removeAllListeners()
       connection.end()
