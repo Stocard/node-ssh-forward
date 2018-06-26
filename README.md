@@ -16,7 +16,7 @@ $ npm install node-ssh-forward
 or
 
 ```sh
-$ yarn install node-ssh-forward
+$ yarn add node-ssh-forward
 ```
 
 ## <a name="usage">Usage</a>
