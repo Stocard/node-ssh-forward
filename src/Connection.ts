@@ -26,11 +26,12 @@ interface Options {
   privateKey?: string | Buffer
   bastionHost?: string
   endHost: string
-  portForwarding: {
-    fromPort: number
-    toPort: number
-    toHost: string
-  }
+}
+
+interface ForwardingOptions {
+  fromPort: number
+  toPort: number
+  toHost?: string
 }
 
 class SSHConnection {
@@ -53,19 +54,58 @@ class SSHConnection {
       connection.end()
     }
     return new Promise<void>((resolve) => {
-      this.server.close(resolve)
+      if (this.server) {
+        this.server.close(resolve)
+      }
+      return resolve()
     })
   }
 
-  public async establish() {
+  public async tty() {
+    const connection = await this.establish()
+    await this.shell(connection)
+  }
+
+  public async executeCommand(command) {
+    const connection = await this.establish()
+    await this.shell(connection, command)
+  }
+
+  private async shell(connection: Client, command?: string) {
+    return new Promise((resolve, reject) => {
+      connection.shell((err, stream) => {
+        if (err) {
+          return reject(err)
+        }
+        stream.on('close', async () => {
+          stream.end()
+          process.stdin.unpipe(stream)
+          process.stdin.destroy()
+          connection.end()
+          await this.shutdown()
+          return resolve()
+        }).stderr.on('data', (data) => {
+          return reject(data)
+        })
+        stream.pipe(process.stdout)
+
+        if (command) {
+          stream.end(`${command}\nexit\n`)
+        } else {
+          process.stdin.pipe(stream)
+        }
+      })
+    })
+  }
+
+  private async establish() {
+    let connection: Client
     if (this.options.bastionHost) {
-      const finalConnection = await this.connectViaBastion(this.options.bastionHost)
-      await this.createForwarding(finalConnection)
+      connection = await this.connectViaBastion(this.options.bastionHost)
     } else {
-      const connection1 = await this.connect(this.options.endHost)
-      await this.createForwarding(connection1)
+      connection = await this.connect(this.options.endHost)
     }
-    return
+    return connection
   }
 
   private async connectViaBastion(bastionHost: string) {
@@ -100,18 +140,18 @@ class SSHConnection {
     })
   }
 
-  private async createForwarding(connection: Client) {
+  async forward(options: ForwardingOptions) {
+    const connection = await this.establish()
     return new Promise((resolve, reject) => {
       this.server = net.createServer((socket) => {
-        connection.forwardOut('localhost', this.options.portForwarding.fromPort, this.options.portForwarding.toHost, this.options.portForwarding.toPort, (error, stream) => {
+        connection.forwardOut('localhost', options.fromPort, options.toHost || 'localhost', options.toPort, (error, stream) => {
           if (error) {
-            console.log('error', error)
             return reject(error)
           }
           socket.pipe(stream)
           stream.pipe(socket)
         })
-      }).listen(this.options.portForwarding.fromPort, 'localhost', () => {
+      }).listen(options.fromPort, 'localhost', () => {
         return resolve()
       })
     })
