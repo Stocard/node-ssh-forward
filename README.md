@@ -84,7 +84,6 @@ Options are an object with following properties:
 * `privateKey` (optional): Can be a `string` or `Buffer` that contains a private key. If not set, it fallbacks to `~/.ssh/id_rsa`
 * `endHost` (required): The host you want to end up on (connect to)
 * `bastionHost` (optional): You can specify a bastion host if you want
-* `portForwarding` (required): 
 
 #### `connection.executeCommand(command: string): Promise<void>`
 
