@@ -95,7 +95,7 @@ Starts an interactive shell session. Will resolve when then client has logged ou
 
 #### `connection.forward(forwardOptions: Object)`
 
-Established port-forwarding.
+Established port-forwarding. Promise resolves after the forwarding has been established. Forwarding can be stopped by calling `connection.shutdown()`
 
 Possible options for `forwardOptions`:
 
@@ -103,6 +103,9 @@ Possible options for `forwardOptions`:
 * `toPort` (required): The port on `endHost` (specified in the SSHConnection options).
 * `toHost` (optional): You can specify an additional `toHost` when you want to forward a port from a different server than your `endHost`.
 
+#### `connection.shutdown()`
+
+Closes all connections.
 
 ## Limitations/Todos
 
