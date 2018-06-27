@@ -1,6 +1,6 @@
 {
   "name": "node-ssh-forward",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "dist/Connection.js",
   "author": "Martin Wentzel <wentzel@stocard.de>",
   "license": "MIT",
@@ -9,7 +9,13 @@
     "ssh2": "^0.6.1"
   },
   "keywords": [
-    "node", "ssh", "bastion host", "shell", "exec", "forward", "jump host"
+    "node",
+    "ssh",
+    "bastion host",
+    "shell",
+    "exec",
+    "forward",
+    "jump host"
   ],
   "homepage": "https://github.com/Stocard/node-ssh-forward",
   "scripts": {
