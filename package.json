@@ -8,6 +8,9 @@
   "dependencies": {
     "ssh2": "^0.6.1"
   },
+  "keywords": [
+    "node", "ssh", "bastion host", "shell", "exec", "forward", "jump host"
+  ],
   "homepage": "https://github.com/Stocard/node-ssh-forward",
   "scripts": {
     "lint": "tslint -c tslint.json 'test/**/*.ts' 'src/**/*.ts'",
