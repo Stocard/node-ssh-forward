@@ -1,6 +1,6 @@
 {
   "name": "node-ssh-forward",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "dist/Connection.js",
   "author": "Martin Wentzel <wentzel@stocard.de>",
   "license": "MIT",
