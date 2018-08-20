@@ -23,7 +23,8 @@ import * as path from 'path'
 
 interface Options {
   username?: string
-  privateKey?: string | Buffer
+  privateKey?: string | Buffer,
+  passphrase? : string,
   bastionHost?: string
   endHost: string
 }
@@ -128,6 +129,9 @@ class SSHConnection {
         host,
         username: this.options.username,
         privateKey: this.options.privateKey
+      }
+      if(this.options.passphrase) {
+        options['passphrase'] = this.options.passphrase
       }
       if (stream) {
         options['sock'] = stream
