@@ -82,7 +82,7 @@ Options are an object with following properties:
 
 * `username` (optional): The username used for your ssh connection (equivalent to `-l` option). If not set, it first looks for an `SSH_USERNAME` environment variable. If that is not set, it fallbacks to `USER` environment variable.
 * `privateKey` (optional): Can be a `string` or `Buffer` that contains a private key. If not set, it fallbacks to `~/.ssh/id_rsa`
-* `passphrase` (optional): Is a `string` which is to decrypt the encrypted private keys. If not set, it falls back to no password.
+* `agentForward` (optional): Is a `boolean` which uses the `ssh-agent` for connection (defaults to `false`.
 * `endHost` (required): The host you want to end up on (connect to)
 * `bastionHost` (optional): You can specify a bastion host if you want
 
