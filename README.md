@@ -110,8 +110,8 @@ Closes all connections.
 
 ## Limitations/Todos
 
-* only works with username and private key
-* does not use your local ssh-agent
+* only works with username , private key and ssh agent
+* host based authentication
 * No tests
 * Better documentation
 * Debug logging
