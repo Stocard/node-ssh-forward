@@ -24,7 +24,7 @@ import * as path from 'path'
 interface Options {
   username?: string
   privateKey?: string | Buffer,
-  passphrase? : string,
+  agentForward? : boolean,
   bastionHost?: string
   endHost: string
 }
@@ -130,8 +130,13 @@ class SSHConnection {
         username: this.options.username,
         privateKey: this.options.privateKey
       }
-      if(this.options.passphrase) {
-        options['passphrase'] = this.options.passphrase
+      if (this.options.agentForward) {
+        options['agentForward'] = true
+        const agentSock = process.env['SSH_AUTH_SOCK'] // guaranteed to give the ssh agent sock if the agent is running
+        if (agentSock === undefined) {
+          throw new Error('SSH Agent is not running and not set in the SSH_AUTH_SOCK env variable')
+        }
+        options['agent'] = agentSock
       }
       if (stream) {
         options['sock'] = stream
