@@ -87,6 +87,7 @@ Options are an object with following properties:
 * `agentForward` (optional): Is a `boolean` which uses the `ssh-agent` for connection (defaults to `false`.
 * `endHost` (required): The host you want to end up on (connect to)
 * `bastionHost` (optional): You can specify a bastion host if you want
+* `passphrase` (optional): You can specify the passphrase when you have an encrypted private key. If you don't specify the passphrase and you use an encrypted private key, you get prompted in the command line. 
 
 #### `connection.executeCommand(command: string): Promise<void>`
 

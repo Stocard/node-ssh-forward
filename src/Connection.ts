@@ -20,12 +20,14 @@ import * as net from 'net'
 import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
+import *  as readline from 'readline'
 
 interface Options {
   username?: string
   privateKey?: string | Buffer,
   agentForward? : boolean,
-  bastionHost?: string
+  bastionHost?: string,
+  passphrase?: string
   endHost: string
 }
 
@@ -124,7 +126,7 @@ class SSHConnection {
 
   private async connect(host: string, stream?: NodeJS.ReadableStream): Promise<Client> {
     const connection = new Client()
-    return new Promise<Client>((resolve) => {
+    return new Promise<Client>(async (resolve) => {
       const options = {
         host,
         username: this.options.username,
@@ -132,7 +134,8 @@ class SSHConnection {
       }
       if (this.options.agentForward) {
         options['agentForward'] = true
-        const agentSock = process.env['SSH_AUTH_SOCK'] // guaranteed to give the ssh agent sock if the agent is running
+        // guaranteed to give the ssh agent sock if the agent is running
+        const agentSock = process.env['SSH_AUTH_SOCK']
         if (agentSock === undefined) {
           throw new Error('SSH Agent is not running and not set in the SSH_AUTH_SOCK env variable')
         }
@@ -141,10 +144,25 @@ class SSHConnection {
       if (stream) {
         options['sock'] = stream
       }
+      if (options.privateKey && options.privateKey.toString().toLowerCase().includes('encrypted')) {
+        options['passphrase'] = (this.options.passphrase) ? this.options.passphrase : await this.getPassphrase()
+      }
       connection.connect(options)
       connection.on('ready', () => {
         this.connections.push(connection)
         return resolve(connection)
+      })
+    })
+  }
+
+  private async getPassphrase() {
+    return new Promise((resolve) => {
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+      })
+      rl.question('Please type in the passphrase for your private key', (answer) => {
+        return resolve(answer)
       })
     })
   }
