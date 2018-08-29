@@ -111,11 +111,16 @@ Possible options for `forwardOptions`:
 
 Closes all connections.
 
+## Developing
+
+* Add your wanted feature to the implementation in `./src`
+* Add test in `./test/test.ts`
+* Run the test with `./test/test.sh`
+
 ## Limitations/Todos
 
 * only works with username , private key and ssh agent
 * host based authentication
-* No tests
 * Better documentation
 * Debug logging
 * Ability to pass an additional string to the `forward` that specifies when the promise is resolved and the forwarding is stopped

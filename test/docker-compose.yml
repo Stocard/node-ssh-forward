@@ -1,0 +1,16 @@
+version: "3.2"
+services:
+  server:
+    ports:
+      - 22:22
+    build:
+      context: ./
+      dockerfile: ./server/Dockerfile
+
+  tester:
+    build:
+      context: ../
+      dockerfile: ./test/client/Dockerfile
+    depends_on:
+      - server
+
