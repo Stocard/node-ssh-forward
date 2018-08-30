@@ -1,0 +1,12 @@
+sudo: required
+services:
+- docker
+script:
+- bash ./test/test.sh
+deploy:
+  provider: npm
+  email: wentzel@stocard.de
+  api_key:
+    secure: ijV+JBZN62V/7UzkxWAyHFqMt2RA3tEloUMJT3OV0oDFx+GYhr4b7Se/bx+mRaafabZLVI6VQcy46Qxf3XLrHYfMMyaueGQmW7olJmcJt2zePEyhtswbj7eTkVaF95Mq/OLv5Tq4BjbyHvONDxXAfJG6Ltw3pefuizW1iWFs1lGdawQ66r5RM4Rb4p1XIzKdC7QTCsf2SC8n3dgYrJa3VDS5+m+W5dA4TWwvLDSn27gKSbMGeVJlarFA9WobkSTLONg9l0IRwXWnnJNWJCY0XkACUT371fEDEU8Hli0e2eZKoxwlJHc/xhzpq7ofQX9KoJZvIzNPcm4d10KQapPWi284wbeGgkr+tjSaYLteza4tnDTPfCPKzx7+j/AC0HQ5QlZreODw92iDwSOZ37KUZA8J9dH87jd3v1d2vKcfSu/GigqING/b27xrf4x27hxyLah5r1yqa2GXyM1HZ4MksENv3iq3h9DmqGPcpgOD/B6hrVgTy4itPV+yzB6sZgwSEfz/FZIuZ7VUcj4FtRfcTQzpHX/1TZf1HWYVzmYXnrST5e0ZdVLttbvws14ILj9G3BU3qpy8gjPaSAsfsff0rtOw7BWfhqDhSHGZVoOP8+GJsCgrQNt4c0kopePchiQIwAqrQgo6Lvn4MYm4m32FOvqbBhzqAyMOkuU7O1Ah8E8=
+  on:
+    tags: true
