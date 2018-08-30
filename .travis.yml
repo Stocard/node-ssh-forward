@@ -1,8 +1,10 @@
-sudo: required
+language: node_js
 services:
 - docker
 script:
 - bash ./test/test.sh
+
+before_deploy: "yarn global add typescript"
 deploy:
   provider: npm
   email: wentzel@stocard.de
