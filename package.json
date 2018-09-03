@@ -22,7 +22,7 @@
     "lint": "tslint -c tslint.json 'test/**/*.ts' 'src/**/*.ts'",
     "clean": "rm -rf dist",
     "build": "yarn clean && tsc",
-    "prepublish": "yarn build",
+    "prepublishOnly": "yarn build",
     "test": "./node_modules/mocha/bin/_mocha --ui bdd --recursive --timeout 30000 --require ts-node/register \"test/test.ts\""
   },
   "devDependencies": {
