@@ -161,7 +161,7 @@ class SSHConnection {
         input: process.stdin,
         output: process.stdout
       })
-      rl.question('Please type in the passphrase for your private key', (answer) => {
+      rl.question('Please type in the passphrase for your private key: ', (answer) => {
         return resolve(answer)
       })
     })
