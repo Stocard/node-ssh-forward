@@ -86,6 +86,7 @@ Options are an object with following properties:
 * `privateKey` (optional): Can be a `string` or `Buffer` that contains a private key. If not set, it fallbacks to `~/.ssh/id_rsa`
 * `agentForward` (optional): Is a `boolean` which uses the `ssh-agent` for connection (defaults to `false`.
 * `endHost` (required): The host you want to end up on (connect to)
+* `endPort` (optional): Port number of the server. Needed in case the server runs on a custom port (defaults to `22`)
 * `bastionHost` (optional): You can specify a bastion host if you want
 * `passphrase` (optional): You can specify the passphrase when you have an encrypted private key. If you don't specify the passphrase and you use an encrypted private key, you get prompted in the command line. 
 
