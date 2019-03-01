@@ -24,10 +24,11 @@ import *  as readline from 'readline'
 
 interface Options {
   username?: string
-  privateKey?: string | Buffer,
-  agentForward? : boolean,
-  bastionHost?: string,
+  privateKey?: string | Buffer
+  agentForward? : boolean
+  bastionHost?: string
   passphrase?: string
+  endPort?: number
   endHost: string
 }
 
@@ -45,6 +46,9 @@ class SSHConnection {
   constructor(private options: Options) {
     if (!options.username) {
       this.options.username = process.env['SSH_USERNAME'] || process.env['USER']
+    }
+    if (!options.endPort) {
+      this.options.endPort = 22
     }
     if (!options.privateKey) {
       this.options.privateKey = fs.readFileSync(`${os.homedir()}${path.sep}.ssh${path.sep}id_rsa`)
@@ -114,7 +118,7 @@ class SSHConnection {
   private async connectViaBastion(bastionHost: string) {
     const connectionToBastion = await this.connect(bastionHost)
     return new Promise<Client>((resolve, reject) => {
-      connectionToBastion.exec(`nc ${this.options.endHost} 22`, async (err, stream) => {
+      connectionToBastion.exec(`nc ${this.options.endHost} ${this.options.endPort}`, async (err, stream) => {
         if (err) {
           return reject(err)
         }
