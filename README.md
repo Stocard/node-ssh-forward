@@ -8,6 +8,9 @@ Has in-built support for bastion hosts (also known as jump hosts).
 * [Usage](#usage)
 * [API](#api)
 
+
+
+
 ## <a name="installation">Installation</a>
 
 ```sh
@@ -22,6 +25,8 @@ $ yarn add node-ssh-forward
 ## <a name="usage">Usage</a>
 
 Setting up the initial ssh connection (using a bastion host)
+
+Bastion host **needs** access to `nc`([netcat](https://ru.wikipedia.org/wiki/Netcat)) command, for example newer aws instances [Linux 2](https://aws.amazon.com/ru/amazon-linux-2/) doesn't have it in base package
 
 ```js
 import { SSHConnection } from ‘node-ssh-forward’
