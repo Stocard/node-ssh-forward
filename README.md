@@ -24,7 +24,7 @@ $ yarn add node-ssh-forward
 Setting up the initial ssh connection (using a bastion host)
 
 ```js
-import { SSHConnection } from ‘node-ssh-forward’
+import { SSHConnection } from 'node-ssh-forward'
 
 const sshConnection = new SSHConnection({
   endHost: 'example.com',
