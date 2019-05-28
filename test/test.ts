@@ -35,6 +35,14 @@ describe('node-ssh-forward', async () => {
       })
       await ssh.executeCommand('uptime')
     })
+    it('with the new openssh key format', async () => {
+      const ssh = new SSHConnection({
+        username: 'root',
+        endHost: 'server',
+        privateKey: fs.readFileSync(`${__dirname}/keys/id_openssh`),
+      })
+      await ssh.executeCommand('uptime')
+    })
     it('with a custom end port', async () => {
       const ssh = new SSHConnection({
         username: 'root',
