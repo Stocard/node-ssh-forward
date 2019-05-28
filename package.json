@@ -6,7 +6,7 @@
   "license": "MIT",
   "description": "Easy to use ssh client with port forwarding and bastion host support",
   "dependencies": {
-    "ssh2": "^0.8.2"
+    "ssh2": "^0.8.4"
   },
   "keywords": [
     "node",
