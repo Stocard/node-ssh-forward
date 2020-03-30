@@ -26,7 +26,7 @@ $ yarn add node-ssh-forward
 
 Setting up the initial ssh connection (using a bastion host)
 
-Bastion host **needs** access to `nc`([netcat](https://en.wikipedia.org/wiki/Netcat)) command, for example the AMIs of newer AWS [Linux 2](https://aws.amazon.com/ru/amazon-linux-2/) instances don't have it installed in their base package
+Bastion host **needs** access to `nc`([netcat](https://en.wikipedia.org/wiki/Netcat)) command, for example the AMIs of newer AWS [Linux 2](https://aws.amazon.com/amazon-linux-2/) instances don't have it installed in their base package
 
 ```js
 import { SSHConnection } from 'node-ssh-forward'
