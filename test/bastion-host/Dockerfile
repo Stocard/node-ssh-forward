@@ -1,7 +1,6 @@
 FROM ubuntu:16.04
 
 RUN apt-get update
-RUN apt-get install netcat -y
 RUN apt-get -yq install openssh-server; \
   mkdir -p /var/run/sshd; \
   mkdir /root/.ssh && chmod 700 /root/.ssh; \

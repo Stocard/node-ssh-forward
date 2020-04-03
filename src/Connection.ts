@@ -125,7 +125,7 @@ class SSHConnection {
     this.debug('Connecting to bastion host "%s"', bastionHost)
     const connectionToBastion = await this.connect(bastionHost)
     return new Promise<Client>((resolve, reject) => {
-      connectionToBastion.exec(`nc ${this.options.endHost} ${this.options.endPort}`, async (err, stream) => {
+      connectionToBastion.forwardOut('127.0.0.1', 22, this.options.endHost, this.options.endPort || 22, async (err, stream) => {
         if (err) {
           return reject(err)
         }
