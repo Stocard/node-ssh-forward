@@ -6,6 +6,13 @@ services:
     build:
       context: ./
       dockerfile: ./server/Dockerfile
+  
+  bastion:
+    ports:
+      - 22:22
+    build:
+      context: ./
+      dockerfile: ./bastion-host/Dockerfile
 
   tester:
     build:
