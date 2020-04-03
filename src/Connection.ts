@@ -21,6 +21,7 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 import *  as readline from 'readline'
+import * as debug from 'debug'
 
 interface Options {
   username?: string
@@ -40,10 +41,12 @@ interface ForwardingOptions {
 
 class SSHConnection {
 
+  private debug
   private server
   private connections: Client[] = []
 
   constructor(private options: Options) {
+    this.debug = debug('ssh')
     if (!options.username) {
       this.options.username = process.env['SSH_USERNAME'] || process.env['USER']
     }
@@ -56,6 +59,7 @@ class SSHConnection {
   }
 
   public async shutdown() {
+    this.debug("Shutdown connections")
     for (const connection of this.connections) {
       connection.removeAllListeners()
       connection.end()
@@ -70,11 +74,13 @@ class SSHConnection {
 
   public async tty() {
     const connection = await this.establish()
+    this.debug("Opening tty")
     await this.shell(connection)
   }
 
   public async executeCommand(command) {
     const connection = await this.establish()
+    this.debug('Executing command "%s"', command)
     await this.shell(connection, command)
   }
 
@@ -116,6 +122,7 @@ class SSHConnection {
   }
 
   private async connectViaBastion(bastionHost: string) {
+    this.debug('Connecting to bastion host "%s"', bastionHost)
     const connectionToBastion = await this.connect(bastionHost)
     return new Promise<Client>((resolve, reject) => {
       connectionToBastion.exec(`nc ${this.options.endHost} ${this.options.endPort}`, async (err, stream) => {
@@ -129,6 +136,7 @@ class SSHConnection {
   }
 
   private async connect(host: string, stream?: NodeJS.ReadableStream): Promise<Client> {
+    this.debug('Connecting to "%s"', host)
     const connection = new Client()
     return new Promise<Client>(async (resolve) => {
       const options = {
@@ -175,6 +183,7 @@ class SSHConnection {
     const connection = await this.establish()
     return new Promise((resolve, reject) => {
       this.server = net.createServer((socket) => {
+        this.debug('Forwarding connection from "localhost:%d" to "%s:%d"', options.fromPort, options.toHost, options.toPort)
         connection.forwardOut('localhost', options.fromPort, options.toHost || 'localhost', options.toPort, (error, stream) => {
           if (error) {
             return reject(error)
