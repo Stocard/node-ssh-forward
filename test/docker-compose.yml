@@ -7,6 +7,14 @@ services:
       context: ./
       dockerfile: ./server/Dockerfile
   
+  server-different-port:
+    ports:
+      - 23:23
+    build:
+      context: ./
+      dockerfile: ./server/Dockerfile
+    command:  /usr/sbin/sshd -D -p 23
+  
   bastion:
     ports:
       - 22:22

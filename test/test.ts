@@ -46,7 +46,7 @@ describe('node-ssh-forward', async () => {
     it('with a custom end port', async () => {
       const ssh = new SSHConnection({
         username: 'root',
-        endHost: 'server',
+        endHost: 'server-different-port',
         endPort: 23
       })
       await ssh.executeCommand('uptime')

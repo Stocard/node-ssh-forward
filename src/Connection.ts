@@ -141,6 +141,7 @@ class SSHConnection {
     return new Promise<Client>(async (resolve) => {
       const options = {
         host,
+        port: this.options.endPort,
         username: this.options.username,
         privateKey: this.options.privateKey
       }
