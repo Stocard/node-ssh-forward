@@ -138,7 +138,7 @@ class SSHConnection {
   private async connect(host: string, stream?: NodeJS.ReadableStream): Promise<Client> {
     this.debug('Connecting to "%s"', host)
     const connection = new Client()
-    return new Promise<Client>(async (resolve) => {
+    return new Promise<Client>(async (resolve, reject) => {
       const options = {
         host,
         port: this.options.endPort,
@@ -160,11 +160,17 @@ class SSHConnection {
       if (options.privateKey && options.privateKey.toString().toLowerCase().includes('encrypted')) {
         options['passphrase'] = (this.options.passphrase) ? this.options.passphrase : await this.getPassphrase()
       }
-      connection.connect(options)
       connection.on('ready', () => {
         this.connections.push(connection)
         return resolve(connection)
       })
+
+      connection.on('error', (error) => {
+        reject(error)
+      })
+
+      connection.connect(options)
+
     })
   }
 
