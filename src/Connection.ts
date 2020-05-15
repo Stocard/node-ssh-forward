@@ -25,12 +25,14 @@ import * as debug from 'debug'
 
 interface Options {
   username?: string
+  password?: string
   privateKey?: string | Buffer
   agentForward? : boolean
   bastionHost?: string
   passphrase?: string
   endPort?: number
   endHost: string
+  agentSocket?: string
 }
 
 interface ForwardingOptions {
@@ -44,6 +46,7 @@ class SSHConnection {
   private debug
   private server
   private connections: Client[] = []
+  private isWindows = process.platform === 'win32'
 
   constructor(private options: Options) {
     this.debug = debug('ssh')
@@ -143,14 +146,20 @@ class SSHConnection {
         host,
         port: this.options.endPort,
         username: this.options.username,
+        password: this.options.password,
         privateKey: this.options.privateKey
       }
       if (this.options.agentForward) {
         options['agentForward'] = true
-        // guaranteed to give the ssh agent sock if the agent is running
-        const agentSock = process.env['SSH_AUTH_SOCK']
+
+        const agentDefault = this.isWindows ? 'pageant' : process.env['SSH_AUTH_SOCK']
+        const agentSock = this.options.agentSocket ? this.options.agentSocket : agentDefault
+
+        console.log(`Using agent socket ${agentSock}`)
+        // guaranteed to give the ssh agent sock if the agent is running (posix)
+        // const agentSock = process.env['SSH_AUTH_SOCK']
         if (agentSock === undefined) {
-          throw new Error('SSH Agent is not running and not set in the SSH_AUTH_SOCK env variable')
+          throw new Error('SSH Agent Socket is not provided, or is not set in the SSH_AUTH_SOCK env variable')
         }
         options['agent'] = agentSock
       }
