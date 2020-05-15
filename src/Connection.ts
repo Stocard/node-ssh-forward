@@ -152,13 +152,18 @@ class SSHConnection {
       if (this.options.agentForward) {
         options['agentForward'] = true
 
-        const agentDefault = this.isWindows ? 'pageant' : process.env['SSH_AUTH_SOCK']
-        const agentSock = this.options.agentSocket ? this.options.agentSocket : agentDefault
-
-        console.log(`Using agent socket ${agentSock}`)
+        // see https://github.com/mscdex/ssh2#client for agents on Windows
         // guaranteed to give the ssh agent sock if the agent is running (posix)
-        // const agentSock = process.env['SSH_AUTH_SOCK']
-        if (agentSock === undefined) {
+        let agentDefault = process.env['SSH_AUTH_SOCK']
+        if (this.isWindows) {
+          // null or undefined
+          if (agentDefault == null) {
+            agentDefault = 'pageant'
+          }
+        }
+
+        const agentSock = this.options.agentSocket ? this.options.agentSocket : agentDefault
+        if (agentSock == null) {
           throw new Error('SSH Agent Socket is not provided, or is not set in the SSH_AUTH_SOCK env variable')
         }
         options['agent'] = agentSock
