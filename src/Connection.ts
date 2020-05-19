@@ -32,7 +32,8 @@ interface Options {
   passphrase?: string
   endPort?: number
   endHost: string
-  agentSocket?: string
+  agentSocket?: string,
+  useDefaultPrivateKey: boolean = true
 }
 
 interface ForwardingOptions {
@@ -56,7 +57,7 @@ class SSHConnection {
     if (!options.endPort) {
       this.options.endPort = 22
     }
-    if (!options.privateKey) {
+    if (!options.privateKey && !options.useDefaultPrivateKey) {
       this.options.privateKey = fs.readFileSync(`${os.homedir()}${path.sep}.ssh${path.sep}id_rsa`)
     }
   }
