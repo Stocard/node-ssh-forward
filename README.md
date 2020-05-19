@@ -83,15 +83,17 @@ await sshConnection.executeCommand('uptime')
 
 #### `new SSHConnection(options)`
 
-Options are an object with following properties: 
+Options are an object with following properties:
 
 * `username` (optional): The username used for your ssh connection (equivalent to `-l` option). If not set, it first looks for an `SSH_USERNAME` environment variable. If that is not set, it fallbacks to `USER` environment variable.
 * `privateKey` (optional): Can be a `string` or `Buffer` that contains a private key. If not set, it fallbacks to `~/.ssh/id_rsa`
-* `agentForward` (optional): Is a `boolean` which uses the `ssh-agent` for connection (defaults to `false`.
+* `skipAutoPrivateKey` (optional): Don't try and read `~/.ssh/id_rsa` if no private key is provided
+* `agentForward` (optional): Is a `boolean` which uses the `ssh-agent` for connection (defaults to `false`). If set defaults to the value of env.SSH_AUTH_SOCK (all platforms), then `pageant` [on Windows](https://github.com/mscdex/ssh2#client-methods) if no SSH_AUTH_SOCK is present.
+* `agentSocket` (optional): Provide your own path to the SSH Agent Socket you want to use. Useful if your app doesn't have access to ENV directly.
 * `endHost` (required): The host you want to end up on (connect to)
 * `endPort` (optional): Port number of the server. Needed in case the server runs on a custom port (defaults to `22`)
 * `bastionHost` (optional): You can specify a bastion host if you want
-* `passphrase` (optional): You can specify the passphrase when you have an encrypted private key. If you don't specify the passphrase and you use an encrypted private key, you get prompted in the command line. 
+* `passphrase` (optional): You can specify the passphrase when you have an encrypted private key. If you don't specify the passphrase and you use an encrypted private key, you get prompted in the command line.
 
 #### `connection.executeCommand(command: string): Promise<void>`
 
