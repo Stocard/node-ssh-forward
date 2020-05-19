@@ -143,6 +143,7 @@ class SSHConnection {
     this.debug('Connecting to "%s"', host)
     const connection = new Client()
     return new Promise<Client>(async (resolve, reject) => {
+
       const options = {
         host,
         port: this.options.endPort,
@@ -183,8 +184,12 @@ class SSHConnection {
       connection.on('error', (error) => {
         reject(error)
       })
+      try {
+        connection.connect(options)
+      } catch (error) {
+        reject(error)
+      }
 
-      connection.connect(options)
 
     })
   }
