@@ -25,12 +25,15 @@ import * as debug from 'debug'
 
 interface Options {
   username?: string
+  password?: string
   privateKey?: string | Buffer
   agentForward? : boolean
   bastionHost?: string
   passphrase?: string
   endPort?: number
   endHost: string
+  agentSocket?: string,
+  skipAutoPrivateKey?: boolean
 }
 
 interface ForwardingOptions {
@@ -44,6 +47,7 @@ class SSHConnection {
   private debug
   private server
   private connections: Client[] = []
+  private isWindows = process.platform === 'win32'
 
   constructor(private options: Options) {
     this.debug = debug('ssh')
@@ -53,8 +57,11 @@ class SSHConnection {
     if (!options.endPort) {
       this.options.endPort = 22
     }
-    if (!options.privateKey) {
-      this.options.privateKey = fs.readFileSync(`${os.homedir()}${path.sep}.ssh${path.sep}id_rsa`)
+    if (!options.privateKey && !options.agentForward && !options.skipAutoPrivateKey) {
+      const defaultFilePath = path.join(os.homedir(), '.ssh', 'id_rsa' )
+      if (fs.existsSync(defaultFilePath)) {
+        this.options.privateKey = fs.readFileSync(defaultFilePath)
+      }
     }
   }
 
@@ -138,19 +145,31 @@ class SSHConnection {
   private async connect(host: string, stream?: NodeJS.ReadableStream): Promise<Client> {
     this.debug('Connecting to "%s"', host)
     const connection = new Client()
-    return new Promise<Client>(async (resolve) => {
+    return new Promise<Client>(async (resolve, reject) => {
+
       const options = {
         host,
         port: this.options.endPort,
         username: this.options.username,
+        password: this.options.password,
         privateKey: this.options.privateKey
       }
       if (this.options.agentForward) {
         options['agentForward'] = true
-        // guaranteed to give the ssh agent sock if the agent is running
-        const agentSock = process.env['SSH_AUTH_SOCK']
-        if (agentSock === undefined) {
-          throw new Error('SSH Agent is not running and not set in the SSH_AUTH_SOCK env variable')
+
+        // see https://github.com/mscdex/ssh2#client for agents on Windows
+        // guaranteed to give the ssh agent sock if the agent is running (posix)
+        let agentDefault = process.env['SSH_AUTH_SOCK']
+        if (this.isWindows) {
+          // null or undefined
+          if (agentDefault == null) {
+            agentDefault = 'pageant'
+          }
+        }
+
+        const agentSock = this.options.agentSocket ? this.options.agentSocket : agentDefault
+        if (agentSock == null) {
+          throw new Error('SSH Agent Socket is not provided, or is not set in the SSH_AUTH_SOCK env variable')
         }
         options['agent'] = agentSock
       }
@@ -160,11 +179,21 @@ class SSHConnection {
       if (options.privateKey && options.privateKey.toString().toLowerCase().includes('encrypted')) {
         options['passphrase'] = (this.options.passphrase) ? this.options.passphrase : await this.getPassphrase()
       }
-      connection.connect(options)
       connection.on('ready', () => {
         this.connections.push(connection)
         return resolve(connection)
       })
+
+      connection.on('error', (error) => {
+        reject(error)
+      })
+      try {
+        connection.connect(options)
+      } catch (error) {
+        reject(error)
+      }
+
+
     })
   }
 
