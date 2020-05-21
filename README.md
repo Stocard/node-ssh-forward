@@ -86,6 +86,7 @@ await sshConnection.executeCommand('uptime')
 Options are an object with following properties:
 
 * `username` (optional): The username used for your ssh connection (equivalent to `-l` option). If not set, it first looks for an `SSH_USERNAME` environment variable. If that is not set, it fallbacks to `USER` environment variable.
+* `password` (optional): Provide a password to authenticate with username and password, not private key. Also see `skipAutoPrivateKey`.
 * `privateKey` (optional): Can be a `string` or `Buffer` that contains a private key. If not set, it fallbacks to `~/.ssh/id_rsa`
 * `skipAutoPrivateKey` (optional): Don't try and read `~/.ssh/id_rsa` if no private key is provided
 * `agentForward` (optional): Is a `boolean` which uses the `ssh-agent` for connection (defaults to `false`). If set defaults to the value of env.SSH_AUTH_SOCK (all platforms), then `pageant` [on Windows](https://github.com/mscdex/ssh2#client-methods) if no SSH_AUTH_SOCK is present.
@@ -124,8 +125,6 @@ Closes all connections.
 * Run the test with `./test/test.sh`
 
 ## Limitations/Todos
-
-* only works with username , private key and ssh agent
 * host based authentication
 * Better documentation
 * Debug logging
