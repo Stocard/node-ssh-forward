@@ -94,6 +94,7 @@ Options are an object with following properties:
 * `endPort` (optional): Port number of the server. Needed in case the server runs on a custom port (defaults to `22`)
 * `bastionHost` (optional): You can specify a bastion host if you want
 * `passphrase` (optional): You can specify the passphrase when you have an encrypted private key. If you don't specify the passphrase and you use an encrypted private key, you get prompted in the command line.
+* `noReadline` (optional): Don't prompt for private key passphrases using readline (eg if this is not run in an interactive session)
 
 #### `connection.executeCommand(command: string): Promise<void>`
 
