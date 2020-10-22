@@ -35,6 +35,7 @@ interface Options {
   agentSocket?: string,
   skipAutoPrivateKey?: boolean
   noReadline?: boolean
+  readyTimeout?: number
 }
 
 interface ForwardingOptions {
@@ -59,7 +60,7 @@ class SSHConnection {
       this.options.endPort = 22
     }
     if (!options.privateKey && !options.agentForward && !options.skipAutoPrivateKey) {
-      const defaultFilePath = path.join(os.homedir(), '.ssh', 'id_rsa' )
+      const defaultFilePath = path.join(os.homedir(), '.ssh', 'id_rsa')
       if (fs.existsSync(defaultFilePath)) {
         this.options.privateKey = fs.readFileSync(defaultFilePath)
       }
@@ -67,7 +68,7 @@ class SSHConnection {
   }
 
   public async shutdown() {
-    this.debug("Shutdown connections")
+    this.debug('Shutdown connections')
     for (const connection of this.connections) {
       connection.removeAllListeners()
       connection.end()
@@ -82,7 +83,7 @@ class SSHConnection {
 
   public async tty() {
     const connection = await this.establish()
-    this.debug("Opening tty")
+    this.debug('Opening tty')
     await this.shell(connection)
   }
 
@@ -155,6 +156,9 @@ class SSHConnection {
         password: this.options.password,
         privateKey: this.options.privateKey
       }
+      if (this.options.readyTimeout) {
+        options['readyTimeout'] = this.options.readyTimeout
+      }
       if (this.options.agentForward) {
         options['agentForward'] = true
 
@@ -181,7 +185,7 @@ class SSHConnection {
       // in fact they always contain a `encryption` header, so we can't do a simple check
       options['passphrase'] = this.options.passphrase
       const looksEncrypted: boolean = this.options.privateKey ? this.options.privateKey.toString().toLowerCase().includes('encrypted') : false
-      if (looksEncrypted && !options['passphrase'] && !this.options.noReadline ) {
+      if (looksEncrypted && !options['passphrase'] && !this.options.noReadline) {
         options['passphrase'] = await this.getPassphrase()
       }
       connection.on('ready', () => {
@@ -197,7 +201,6 @@ class SSHConnection {
       } catch (error) {
         reject(error)
       }
-
 
     })
   }
