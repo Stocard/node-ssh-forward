@@ -96,6 +96,8 @@ Options are an object with following properties:
 * `bastionHost` (optional): You can specify a bastion host if you want
 * `passphrase` (optional): You can specify the passphrase when you have an encrypted private key. If you don't specify the passphrase and you use an encrypted private key, you get prompted in the command line.
 * `noReadline` (optional): Don't prompt for private key passphrases using readline (eg if this is not run in an interactive session)
+* `tryKeyboardInteractive` (optional): Try keyboard-interactive user authentication if primary authentication method fails, and prompts provided by SSH server (defaults to `false`)
+
 
 #### `connection.executeCommand(command: string): Promise<void>`
 
