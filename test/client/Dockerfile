@@ -1,4 +1,4 @@
-FROM stocard/node:8.11
+FROM stocard/node:12
 COPY ./package.json ./package.json
 COPY ./yarn.lock ./yarn.lock
 RUN yarn install --silent --frozen-lockfile
