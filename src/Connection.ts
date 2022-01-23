@@ -34,7 +34,8 @@ interface Options {
   endHost: string
   agentSocket?: string,
   skipAutoPrivateKey?: boolean
-  noReadline?: boolean
+  noReadline?: boolean,
+  verifyKnownHosts?: boolean
 }
 
 interface ForwardingOptions {
@@ -148,12 +149,39 @@ class SSHConnection {
     const connection = new Client()
     return new Promise<Client>(async (resolve, reject) => {
 
-      const options = {
+      const options : {[k: string]: any} = {
         host,
         port: this.options.endPort,
         username: this.options.username,
         password: this.options.password,
         privateKey: this.options.privateKey
+      }
+      if (this.options.verifyKnownHosts) {
+        options.hostVerifier = function(hashedKey, verifyCb) {
+          let b64key = hashedKey.toString('base64');
+          if (!b64key) return false;
+
+          let escapedHost = host.replace(/[^a-z\d\.\-]/g,'$1'); // Make arg safer for shell-exec by enforcing a strict whitelist of literal host chars
+          let connPort = Number(options.port);
+          if (connPort && connPort !== 22) {
+            escapedHost = '['+escapedHost+']:'+connPort;
+          }
+          let { exec } = require("child_process");
+          exec('ssh-keygen -F "'+escapedHost+'"', (error, stdout) => {
+              if (error) {
+                  verifyCb(false);
+                  return;
+              }
+              let matching_key = stdout.split("\n").find(function(keyline) {
+                return keyline.split(" ")[2] === b64key;
+              });
+              if (matching_key) {
+                verifyCb(true);
+              } else {
+                verifyCb(false);
+              }
+          });
+        };
       }
       if (this.options.agentForward) {
         options['agentForward'] = true
