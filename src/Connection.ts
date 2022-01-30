@@ -34,7 +34,8 @@ interface Options {
   endHost: string
   agentSocket?: string,
   skipAutoPrivateKey?: boolean
-  noReadline?: boolean
+  noReadline?: boolean,
+  tryKeyboardInteractive?:boolean
 }
 
 interface ForwardingOptions {
@@ -59,15 +60,18 @@ class SSHConnection {
       this.options.endPort = 22
     }
     if (!options.privateKey && !options.agentForward && !options.skipAutoPrivateKey) {
-      const defaultFilePath = path.join(os.homedir(), '.ssh', 'id_rsa' )
+      const defaultFilePath = path.join(os.homedir(), '.ssh', 'id_rsa')
       if (fs.existsSync(defaultFilePath)) {
         this.options.privateKey = fs.readFileSync(defaultFilePath)
       }
     }
+    if (!options.tryKeyboardInteractive) {
+      this.options.tryKeyboardInteractive = false
+    }
   }
 
   public async shutdown() {
-    this.debug("Shutdown connections")
+    this.debug('Shutdown connections')
     for (const connection of this.connections) {
       connection.removeAllListeners()
       connection.end()
@@ -82,7 +86,7 @@ class SSHConnection {
 
   public async tty() {
     const connection = await this.establish()
-    this.debug("Opening tty")
+    this.debug('Opening tty')
     await this.shell(connection)
   }
 
@@ -153,7 +157,8 @@ class SSHConnection {
         port: this.options.endPort,
         username: this.options.username,
         password: this.options.password,
-        privateKey: this.options.privateKey
+        privateKey: this.options.privateKey,
+        tryKeyboard: this.options.tryKeyboardInteractive
       }
       if (this.options.agentForward) {
         options['agentForward'] = true
@@ -181,7 +186,7 @@ class SSHConnection {
       // in fact they always contain a `encryption` header, so we can't do a simple check
       options['passphrase'] = this.options.passphrase
       const looksEncrypted: boolean = this.options.privateKey ? this.options.privateKey.toString().toLowerCase().includes('encrypted') : false
-      if (looksEncrypted && !options['passphrase'] && !this.options.noReadline ) {
+      if (looksEncrypted && !options['passphrase'] && !this.options.noReadline) {
         options['passphrase'] = await this.getPassphrase()
       }
       connection.on('ready', () => {
@@ -192,12 +197,16 @@ class SSHConnection {
       connection.on('error', (error) => {
         reject(error)
       })
+
+      connection.on('keyboard-interactive', (_name:string, _instructions:string, _instructionsLang:string, prompts:{prompt:string}[], finish):void => {
+        this.presentAllPrompts(prompts, finish)
+      })
+
       try {
         connection.connect(options)
       } catch (error) {
         reject(error)
       }
-
 
     })
   }
@@ -212,6 +221,38 @@ class SSHConnection {
         return resolve(answer)
       })
     })
+  }
+
+  private presentAllPrompts(prompts:{prompt:string}[], finish) {
+    // prompt answers collected so far
+    const promptAnswers:string[] = []
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    })
+    // when readline closed, we are finished with prompts
+    rl.on('close', () => {
+      // send back prompt answers
+      finish(promptAnswers)
+    })
+    // function to present prompt at index specified
+    const presentPrompt = (prompts, promptIndex):void => {
+      rl.question(prompts[promptIndex].prompt, (answer:string) => {
+        // add answer to prompt array
+        promptAnswers.push(answer)
+        const nextPromptNum = promptIndex + 1
+        // if no next prompt, close read line
+        if (nextPromptNum >= prompts.length) {
+          rl.close()
+        } else {
+          presentPrompt(prompts, nextPromptNum)
+        }
+      })
+    }
+    // if there are prompts, present prompt at index 0
+    if (prompts.length > 0) {
+      presentPrompt(prompts, 0)
+    }
   }
 
   async forward(options: ForwardingOptions) {
