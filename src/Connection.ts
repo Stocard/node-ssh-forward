@@ -38,6 +38,7 @@ interface Options {
 }
 
 interface ForwardingOptions {
+  fromHost?: string
   fromPort: number
   toPort: number
   toHost?: string
@@ -219,14 +220,14 @@ class SSHConnection {
     return new Promise((resolve, reject) => {
       this.server = net.createServer((socket) => {
         this.debug('Forwarding connection from "localhost:%d" to "%s:%d"', options.fromPort, options.toHost, options.toPort)
-        connection.forwardOut('localhost', options.fromPort, options.toHost || 'localhost', options.toPort, (error, stream) => {
+        connection.forwardOut(options.fromHost || 'localhost', options.fromPort, options.toHost || 'localhost', options.toPort, (error, stream) => {
           if (error) {
             return reject(error)
           }
           socket.pipe(stream)
           stream.pipe(socket)
         })
-      }).listen(options.fromPort, 'localhost', () => {
+      }).listen(options.fromPort, options.fromHost || 'localhost', () => {
         return resolve()
       })
     })
