@@ -21,6 +21,13 @@ services:
     build:
       context: ./
       dockerfile: ./bastion-host/Dockerfile
+  
+  bastion-different-user:
+    ports:
+      - 22:22
+    build:
+      context: ./
+      dockerfile: ./bastion-host/DockerfileDiffUser
 
   tester:
     build:

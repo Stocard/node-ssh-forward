@@ -1,0 +1,20 @@
+FROM ubuntu:16.04
+
+RUN apt-get update
+RUN apt-get -yq install openssh-server; \
+  mkdir -p /var/run/sshd; \  
+  useradd -r -m bastionUser; \
+  cd /home/bastionUser; \
+  mkdir ./.ssh && chmod 700 ./.ssh; \
+  touch ./.ssh/authorized_keys
+
+COPY ./bastion-host/sshd_config_diffUser /etc/ssh/sshd_config
+
+COPY ./keys/authorized_keys /home/bastionUser/.ssh/authorized_keys
+
+RUN cd /home/bastionUser/.ssh; \
+    chgrp -R bastionUser ./; \
+    chown -R bastionUser ./
+
+EXPOSE 22 23
+CMD /usr/sbin/sshd -D -p 22 -p 23
