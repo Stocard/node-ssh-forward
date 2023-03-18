@@ -61,5 +61,23 @@ describe('node-ssh-forward', async () => {
       })
       await ssh.executeCommand('uptime')
     })
+    it('with root as bastion user and default path to the private key', async () => {
+      const ssh = new SSHConnection({
+        username: 'root',
+        endHost: 'server',
+        bastionHost: 'bastion',
+        bastionUsername: 'root'
+      })
+      await ssh.executeCommand('uptime')
+    })
+    it('with bastionUser as bastion user and default path to the private key', async () => {
+      const ssh = new SSHConnection({
+        username: 'root',
+        endHost: 'server',
+        bastionHost: 'bastion-different-user',
+        bastionUsername: 'bastionUser'
+      })
+      await ssh.executeCommand('uptime')
+    })
   })
 })

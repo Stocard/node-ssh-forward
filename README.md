@@ -69,6 +69,24 @@ await sshConnection.forward({
 })
 ```
 
+#### Port forwarding and using a bastion/jump host with different user to jump host and end host
+
+```sh
+$ ssh -L 9000:localhost:80 -J your-jump-user@your-jump-host.com example.com
+```
+
+```js
+const sshConnection = new SSHConnection({
+  endHost: 'example.com',
+  bastionHost: 'your-jump-host.com',
+  bastionUsername: 'your-jump-user'
+})
+await sshConnection.forward({
+  fromPort: 9000,
+  toPort: 80,
+})
+```
+
 #### Executing a command on the remote server
 
 ```js
@@ -94,6 +112,8 @@ Options are an object with following properties:
 * `endHost` (required): The host you want to end up on (connect to)
 * `endPort` (optional): Port number of the server. Needed in case the server runs on a custom port (defaults to `22`)
 * `bastionHost` (optional): You can specify a bastion host if you want
+* `bastionUsername` (optional): You can specify the bastion username if you want, in case it is different from the user connecting to end host.
+If not provided while bastionHost is specified, connection will fall back to the username.
 * `passphrase` (optional): You can specify the passphrase when you have an encrypted private key. If you don't specify the passphrase and you use an encrypted private key, you get prompted in the command line.
 * `noReadline` (optional): Don't prompt for private key passphrases using readline (eg if this is not run in an interactive session)
 

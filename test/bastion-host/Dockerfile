@@ -6,7 +6,7 @@ RUN apt-get -yq install openssh-server; \
   mkdir /root/.ssh && chmod 700 /root/.ssh; \
   touch /root/.ssh/authorized_keys
 
-COPY ./server/sshd_config /etc/ssh/sshd_config
+COPY ./bastion-host/sshd_config /etc/ssh/sshd_config
 
 
 COPY ./keys/authorized_keys /root/.ssh/authorized_keys

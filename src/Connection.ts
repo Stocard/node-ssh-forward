@@ -29,6 +29,7 @@ interface Options {
   privateKey?: string | Buffer
   agentForward? : boolean
   bastionHost?: string
+  bastionUsername?: string
   passphrase?: string
   endPort?: number
   endHost: string
@@ -151,7 +152,7 @@ class SSHConnection {
       const options = {
         host,
         port: this.options.endPort,
-        username: this.options.username,
+        username: (this.options.bastionHost && host === this.options.bastionHost && this.options.bastionUsername) ? this.options.bastionUsername : this.options.username,
         password: this.options.password,
         privateKey: this.options.privateKey
       }

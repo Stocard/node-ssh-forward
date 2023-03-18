@@ -10,14 +10,15 @@ RUN yarn build
 
 # adds the ssh keys
 COPY ./test/keys /root/.ssh/
+COPY ./test/keys /home/bastionUser/.ssh/
 
 # add the non protected key as the standard key
 COPY ./test/keys/id_rsa_no_pass /root/.ssh/id_rsa
+COPY ./test/keys/id_rsa_no_pass /home/bastionUser/.ssh/id_rsa
 COPY ./test/keys/id_rsa_no_pass.pub /root/.ssh/id_rsa.pub
-
+COPY ./test/keys/id_rsa_no_pass.pub /home/bastionUser/.ssh/id_rsa.pub
 
 # COPY ./dist ./dist
 COPY ./test ./test
-
 
 CMD ["yarn", "test"]
